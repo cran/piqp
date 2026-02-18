@@ -9,10 +9,10 @@
 #ifndef PIQP_DENSE_MODEL_HPP
 #define PIQP_DENSE_MODEL_HPP
 
-#include <Eigen/Dense>
-#include <Eigen/Sparse>
+#include <limits>
 
 #include "piqp/typedefs.hpp"
+#include "piqp/utils/optional.hpp"
 
 namespace piqp
 {
@@ -31,19 +31,45 @@ struct Model
 
     Vec<T> c;
     Vec<T> b;
-    Vec<T> h;
-    Vec<T> x_lb;
-    Vec<T> x_ub;
+    Vec<T> h_l;
+    Vec<T> h_u;
+    Vec<T> x_l;
+    Vec<T> x_u;
 
     Model(const CMatRef<T>& P,
-          const CMatRef<T>& A,
-          const CMatRef<T>& G,
           const CVecRef<T>& c,
-          const CVecRef<T>& b,
-          const CVecRef<T>& h,
-          const CVecRef<T>& x_lb,
-          const CVecRef<T>& x_ub) noexcept
-      : P(P), A(A), G(G), c(c), b(b), h(h), x_lb(x_lb), x_ub(x_ub) {}
+          const optional<CMatRef<T>>& A = nullopt,
+          const optional<CVecRef<T>>& b = nullopt,
+          const optional<CMatRef<T>>& G = nullopt,
+          const optional<CVecRef<T>>& h_l = nullopt,
+          const optional<CVecRef<T>>& h_u = nullopt,
+          const optional<CVecRef<T>>& x_l = nullopt,
+          const optional<CVecRef<T>>& x_u = nullopt) noexcept
+      : P(P), c(c)
+    {
+        isize n = P.rows();
+        isize p = A.has_value() ? A->rows() : 0;
+        isize m = G.has_value() ? G->rows() : 0;
+
+        if (P.rows() != n || P.cols() != n) { piqp_eprint("P must be square\n"); }
+        if (A.has_value() && (A->rows() != p || A->cols() != n)) { piqp_eprint("A must have correct dimensions\n"); }
+        if (G.has_value() && (G->rows() != m || G->cols() != n)) { piqp_eprint("G must have correct dimensions\n"); }
+        if (c.size() != n) { piqp_eprint("c must have correct dimensions\n"); }
+        if ((b.has_value() && b->size() != p) || (!b.has_value() && p > 0)) { piqp_eprint("b must have correct dimensions\n"); }
+        if (h_l.has_value() && h_l->size() != m) { piqp_eprint("h_l must have correct dimensions\n"); }
+        if (h_u.has_value() && h_u->size() != m) { piqp_eprint("h_u must have correct dimensions\n"); }
+        if (!h_l.has_value() && !h_u.has_value() && m > 0) { piqp_eprint("h_l or h_u should be provided\n"); }
+        if (x_l.has_value() && x_l->size() != n) { piqp_eprint("x_l must have correct dimensions\n"); }
+        if (x_u.has_value() && x_u->size() != n) { piqp_eprint("x_u must have correct dimensions\n"); }
+
+        this->A = A.value_or(Mat<T>(p, n));
+        this->G = G.value_or(Mat<T>(m, n));
+        this->b = b.value_or(Vec<T>(p));
+        this->h_l = h_l.value_or(Vec<T>::Constant(m, -std::numeric_limits<T>::infinity()));
+        this->h_u = h_u.value_or(Vec<T>::Constant(m, std::numeric_limits<T>::infinity()));
+        this->x_l = x_l.value_or(Vec<T>::Constant(n, -std::numeric_limits<T>::infinity()));
+        this->x_u = x_u.value_or(Vec<T>::Constant(n, std::numeric_limits<T>::infinity()));
+    }
 };
 
 } // namespace sparse

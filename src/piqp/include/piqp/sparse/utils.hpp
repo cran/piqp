@@ -1,6 +1,6 @@
 // This file is part of PIQP.
 //
-// Copyright (c) 2023 EPFL
+// Copyright (c) 2024 EPFL
 // Copyright (c) 2022 INRIA
 //
 // This source code is licensed under the BSD 2-Clause License found in the
@@ -8,6 +8,8 @@
 
 #ifndef PIQP_SPARSE_UTILS_HPP
 #define PIQP_SPARSE_UTILS_HPP
+
+#include "piqp/typedefs.hpp"
 
 namespace piqp
 {
@@ -152,7 +154,7 @@ void transpose_no_allocation(const CSparseMatRef<T, I>& A, SparseMat<T, I>& C)
     }
     // revert outer index pointer which has been abused as a temporary
     isize m = A.innerSize();
-    eigen_assert(m == 0 || (C.outerIndexPtr()[m - 1] == C.outerIndexPtr()[m]) && "sparsity pattern of C does not match AT!");
+    eigen_assert(m == 0 || ((C.outerIndexPtr()[m - 1] == C.outerIndexPtr()[m]) && "sparsity pattern of C does not match AT!"));
     for (isize j = m - 1; j > 0; j--)
     {
         C.outerIndexPtr()[j] = C.outerIndexPtr()[j - 1];
