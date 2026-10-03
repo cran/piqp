@@ -6,8 +6,6 @@
 // This source code is licensed under the BSD 2-Clause License found in the
 // LICENSE file in the root directory of this source tree.
 
-// R interface patch: adds piqp_flush() macro for R_FlushConsole()
-
 #ifndef PIQP_FWD_HPP
 #define PIQP_FWD_HPP
 
@@ -58,17 +56,13 @@
 #ifdef MATLAB
 #define piqp_print mexPrintf
 #define piqp_eprint mexPrintf
-#define piqp_flush() ((void)0)
 #elif defined R_LANG
 #include <R_ext/Print.h>
-#include <R_ext/Utils.h>
 #define piqp_print Rprintf
 #define piqp_eprint REprintf
-#define piqp_flush() R_FlushConsole()
 #else
 #define piqp_print printf
 #define piqp_eprint(...) fprintf(stderr, __VA_ARGS__)
-#define piqp_flush() fflush(stdout)
 #endif
 
 #endif //PIQP_FWD_HPP
