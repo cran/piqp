@@ -1,3 +1,17 @@
+# piqp 0.6.4.1
+
+* Fix undefined behavior reported by CRAN's gcc-UBSAN checks: the dense
+  backend's KKT constructor move-assigned a freshly constructed `Eigen::LLT`,
+  whose `m_info` member released Eigen (3.4.x and 5.0.x) leaves
+  uninitialized. The Cholesky object is now initialized by factorizing a
+  full-size zero matrix, which also keeps all memory allocation in setup.
+  This is the fix merged upstream in PIQP (PREDICT-EPFL/piqp#45), applied
+  to the vendored v0.6.4 sources through the package's patch file.
+* `R CMD build` with R-devel no longer leaves the `src/.r_patched` marker in
+  the tarball: a `clean` rule in `src/Makevars` now removes it.
+* New on-demand GitHub Actions workflow `sanitizers.yaml` that checks the
+  package in the r-hub gcc16, gcc-asan, and clang-ubsan containers.
+
 # piqp 0.6.4
 
 * Update to v0.6.4 of the underlying PIQP library

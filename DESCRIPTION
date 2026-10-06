@@ -1,7 +1,7 @@
 Package: piqp
 Title: R Interface to Proximal Interior Point Quadratic Programming
         Solver
-Version: 0.6.4
+Version: 0.6.4.1
 Authors@R: c(person("Balasubramanian", "Narasimhan", role=c("aut", "cre"),
 	   	   email = "naras@stanford.edu"),
              person("Roland", "Schwan", role = c("aut", "cph")),
@@ -20,7 +20,7 @@ VignetteBuilder: knitr
 Imports: Matrix, methods, Rcpp, S7
 Config/roxygen2/version: 8.1.0
 NeedsCompilation: yes
-Packaged: 2026-10-03 01:33:27 UTC; naras
+Packaged: 2026-10-06 00:46:32 UTC; naras
 Author: Balasubramanian Narasimhan [aut, cre],
   Roland Schwan [aut, cph],
   Yuning Jiang [aut],
@@ -28,4 +28,4 @@ Author: Balasubramanian Narasimhan [aut, cre],
   Colin N. Jones [aut]
 Maintainer: Balasubramanian Narasimhan <naras@stanford.edu>
 Repository: CRAN
-Date/Publication: 2026-10-03 03:00:02 UTC
+Date/Publication: 2026-10-06 08:10:02 UTC
